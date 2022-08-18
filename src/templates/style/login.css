@@ -103,7 +103,7 @@ body
     transition: 0.5s;
     z-index: 1000;
 }
-.content a
+.content button
 {
     font-size: 20px;
     position: relative;
@@ -118,7 +118,7 @@ body
     background: white;
     transition: 0.35s;
 }
-.content a:hover
+.content button:hover
 {
     box-shadow: 1px 1px 12px white;
     color: #000030;
