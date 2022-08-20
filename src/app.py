@@ -15,7 +15,6 @@ def login():
 
     if 'value' in session:
         return redirect(url_for('home'))
-
     return render_template("login.html")
 
 
@@ -25,7 +24,6 @@ def processUserLogin(userInfo):
     user_info = json.loads(userInfo)
     wallet_address = user_info['user_address']
     session['value'] = wallet_address
-    print(wallet_address)
     return "User Info recieved"
 
 
@@ -36,11 +34,17 @@ def processNewUser():
 
     if info not in usersWallet:
         usersWallet[info] = True
-        return 'hi new user'
-        
+        return 'New User'
+
     else:
         return redirect(url_for('home'))
     
+
+
+@app.route("/NewUserProfile")
+def NewUserProfile():
+    pass
+
 
 
 @app.route("/home")
