@@ -18,6 +18,7 @@ async function connect() {
 
         }
         request.send()
+        window.open("http://127.0.0.1:5000/processNewUser","_self")
 
         
     } else {
