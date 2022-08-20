@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.debug = True
 app._static_folder = 'templates/static'
 app.config['SECRET_KEY'] = 'mysecret'
+usersWallet = {}
 
 
 
@@ -18,14 +19,28 @@ def login():
     return render_template("login.html")
 
 
-
-@app.route('/processUserLogin/<string:userInfo>', methods=["POST"])
+@app.route('/processUserLogin/<string:userInfo>', methods=["GET","POST"])
 def processUserLogin(userInfo):
 
     user_info = json.loads(userInfo)
-    session['value'] = user_info['user_address']
-    print(user_info['user_address'])
+    wallet_address = user_info['user_address']
+    session['value'] = wallet_address
+    print(wallet_address)
     return "User Info recieved"
+
+
+@app.route("/processNewUser")
+def processNewUser():
+    
+    info = session.get('value')
+
+    if info not in usersWallet:
+        usersWallet[info] = True
+        return 'hi new user'
+        
+    else:
+        return redirect(url_for('home'))
+    
 
 
 @app.route("/home")
@@ -37,6 +52,7 @@ def home():
 
     else:
         return redirect(url_for('login'))
+
 
 
 
