@@ -9,7 +9,6 @@ app.config['SECRET_KEY'] = 'mysecret'
 usersWallet = {}
 
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
