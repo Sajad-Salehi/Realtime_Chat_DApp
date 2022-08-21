@@ -12,14 +12,22 @@ async function connect() {
 
         const request = new XMLHttpRequest()
         request.open('POST', `/processUserLogin/${JSON.stringify(userInfo)}`)
+
         request.onload = () => {
+
             const flaskMessage = request.responseText
             console.log(flaskMessage)
 
+            if(flaskMessage == "new user"){
+                window.open("http://127.0.0.1:5000/processNewUser","_self")
+            }
+
+            if(flaskMessage == "old user"){
+                window.open("http://127.0.0.1:5000/home","_self")
+            }
         }
         request.send()
-        window.open("http://127.0.0.1:5000/processNewUser","_self")
-
+        
         
     } else {
 
