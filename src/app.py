@@ -9,47 +9,19 @@ app.config['SECRET_KEY'] = 'mysecret'
 usersWallet = {}
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
 def login():
 
-    if 'value' in session:
+    if 'value' in session and checkUserAddress(session.get('value')) == True:
         return redirect(url_for('home'))
+
     return render_template("login.html")
-
-
-@app.route('/processUserLogin/<string:userInfo>', methods=["GET","POST"])
-def processUserLogin(userInfo):
-
-    user_info = json.loads(userInfo)
-    wallet_address = user_info['user_address']
-    session['value'] = wallet_address
-    return "User Info recieved"
-
-
-@app.route("/processNewUser")
-def processNewUser():
-    
-    info = session.get('value')
-
-    if info not in usersWallet:
-        usersWallet[info] = True
-        return 'New User'
-
-    else:
-        return redirect(url_for('home'))
-    
-
-
-@app.route("/NewUserProfile")
-def NewUserProfile():
-    pass
-
 
 
 @app.route("/home")
 def home():
 
-    if 'value' in session:
+    if 'value' in session and checkUserAddress(session.get('value')):
         print(session.get('value'))
         return "hey how are you"
 
@@ -57,6 +29,55 @@ def home():
         return redirect(url_for('login'))
 
 
+@app.route("/logout")
+def logout():
+    
+    if 'value' in session:
+        session.pop('value')
+    
+    return redirect(url_for('login'))
+
+
+@app.route('/processUserLogin/<string:userInfo>', methods=["POST"])
+def processUserLogin(userInfo):
+
+    user_info = json.loads(userInfo)
+    wallet_address = user_info['user_address']
+    session['value'] = wallet_address
+
+    if wallet_address not in usersWallet:
+        return "new user"
+
+    if wallet_address in usersWallet and usersWallet[wallet_address] == False:
+        return "new user"
+
+    else:
+        return "old user"
+
+
+@app.route("/processNewUser")
+def processNewUser():
+    
+    info = session.get('value')
+    print("new user", info)
+
+    if info not in usersWallet and info != None:
+        usersWallet[info] = False
+        return render_template('newUser.html')
+
+    elif checkUserAddress(info):
+        return redirect(url_for('home'))
+    
+    else:
+        return redirect(url_for("login"))
+
+
+def checkUserAddress(address):
+
+    if address in usersWallet and usersWallet[address] == True:
+        return True
+
+    return False
 
 
 if __name__ == '__main__':
