@@ -72,6 +72,19 @@ def processNewUser():
         return redirect(url_for("login"))
 
 
+@app.route('/NewUserProfile', methods=["POST"])
+def NewUserProfile():
+
+    if request.method == "POST":
+
+        pkey = request.form.get('c1')
+        name = request.form.get('c2')
+        bio = request.form.get('c3')
+        avatar = request.files['c4']  
+        print(pkey, name, bio)
+        return "recived"
+
+
 def checkUserAddress(address):
 
     if address in usersWallet and usersWallet[address] == True:
