@@ -1,0 +1,121 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-wrap: wrap;
+    background: linear-gradient(45deg,#052058,#2e074e, #3f0924, #380238);;
+}
+
+.box {
+
+    position: relative;
+    width: 650px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #030229;
+    margin: 40px;
+}
+
+.box:before {
+
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #fff;
+    z-index: -1;
+
+}
+
+.box:after {
+
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #fff;
+    z-index: -1;
+    filter: blur(40px);
+
+}
+
+.box:nth-child(1):before,
+.box:nth-child(1)::after{
+    background: linear-gradient(235deg, #ff005e, #010615, #fbff00);
+}
+
+.box .glass {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    display: block;
+    background: rgba(175, 126, 175, 0.1);
+    pointer-events: none;
+
+}
+
+.box .content {
+
+    padding: 30px;
+    color: antiquewhite;
+    text-align: center;
+}
+
+.name {
+
+    padding: 10px;
+    width: 250px;
+    border-radius: 20px;
+    margin-top: 20px;
+    font-family: sans-serif;
+    font-size: 15px;
+}
+
+.bio {
+
+    padding: 10px;
+    width: 250px;
+    border-radius: 20px;
+    margin-top: 10px;
+    font-family: sans-serif;
+    font-size: 15px;
+}
+
+.avatar {
+
+    padding: 10px;
+    width: 200px;
+    border-radius: 20px;
+    margin-top: 10px;
+    font-family: sans-serif;
+    font-size: 15px;
+}
+
+.submit {
+
+    padding: 8px;
+    width: 120px;
+    margin-top: 10px;
+    font-family: sans-serif;
+    font-size: 12px;
+    background: lightgray;
+    border-radius: 20px;
+}
