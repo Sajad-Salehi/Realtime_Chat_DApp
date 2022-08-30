@@ -6,8 +6,7 @@ import { MoralisProvider } from "react-moralis";
 export default function Login(){
     
     return(
-
-        <div>
+        <div>  
             <MoralisProvider initializeOnMount={false}>
                 <NotificationProvider>
                     <ConnectButton moralisAuth={false}/>
