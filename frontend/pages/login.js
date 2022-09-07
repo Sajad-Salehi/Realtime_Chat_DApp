@@ -7,16 +7,23 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 
 
 export default function login() {
-
-    return(
-        
-        <div>
-            <Head>
-                <title>Chat DApp | Login</title>
-                <meta name="description" content="Login to Chat DApp through Connect Wallet" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <Login />
-        </div>
+  
+    const { address, isConnected } = useAccount()
+    const { connect } = useConnect({
+      connector: new InjectedConnector(),
+    })
+    const { disconnect } = useDisconnect()
+  
+    return (
+      <div>
+        <ConnectButton />
+        {isConnected ?(
+          <div>hello {address}</div>
+        ) : (<h1>ihh </h1>)
+        }
+              
+      </div>
+      
     )
-}
+  }
+  
