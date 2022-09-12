@@ -23,6 +23,7 @@ const { connectors } = getDefaultWallets({
   appName: 'My RainbowKit App',
   chains
 });
+
 const wagmiClient = createClient({
   autoConnect: true,
   connectors,
@@ -40,7 +41,7 @@ function MyApp({ Component, pageProps }) {
       </RainbowKitProvider>
     </WagmiConfig>
 
-  )
+  );
 
 }
 
