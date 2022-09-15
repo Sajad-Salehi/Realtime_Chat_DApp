@@ -11,14 +11,10 @@ import { useState } from 'react'
 export default function Home() {
   
   const { address, isConnected } = useAccount()
-  const { connect } = useConnect({
-        connector: new InjectedConnector(),
-  })
+  const { connect } = useConnect({connector: new InjectedConnector()})
   const { disconnect } = useDisconnect()
   const { provider } = useProvider()
   const { data: signer, isError, isLoading } = useSigner()
-
-
   const [file, setFile] = useState()
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
@@ -59,19 +55,33 @@ export default function Home() {
     <div>
       <h2>Chat DApp | New Profile</h2>
       <ConnectButton />
-      
+      <hr></hr>
       {isConnected ?(
-        <div>
-          <hr></hr>
+        <div style={{display: "flex", flexDirection: "column"}}>
+          
           <h4>please connect your wallet to bundlr network</h4>
-          <input onChange={onFileChange} type="file" />
-          <button onClick={init}>initialize</button>
+          
+          {
+            !image && <div>
+              <label>Profile Picture</label>
+              <input onChange={onFileChange} type="file" required/>
+            </div>
+          }
           {
             image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />
           }
           {
             URI && <a href={URI}>{URI}</a>
           }
+
+          <label>Username</label>
+          <input onChange={onFileChange} type="text" required style={{width: "150px"}}/>
+
+          <label>bio</label>
+          <input onChange={onFileChange} type="text" required style={{width: "150px"}}/>
+
+          <button onClick={init} style={{width: '200px', marginTop: '20px'}}>initialize</button>
+          
         </div>
         
       ) : (<h1>Please Connect to a wallet </h1>)
