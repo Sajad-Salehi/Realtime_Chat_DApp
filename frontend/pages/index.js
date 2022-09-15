@@ -3,9 +3,8 @@ import { useAccount, useConnect, useDisconnect, useProvider } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WebBundlr } from '@bundlr-network/client'
 import { useSigner } from 'wagmi'
-import { useContext, useState } from 'react'
-import { BigNumber } from 'ethers';
-import BundlrTransaction from '@bundlr-network/client/build/common/transaction';
+import { useState } from 'react'
+
 
 
 
