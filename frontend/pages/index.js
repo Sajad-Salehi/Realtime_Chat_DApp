@@ -6,8 +6,6 @@ import { useSigner } from 'wagmi'
 import { useState } from 'react'
 
 
-
-
 export default function Home() {
   
   const { address, isConnected } = useAccount()
@@ -19,6 +17,7 @@ export default function Home() {
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
 
+
   async function init() {
 
     const bundlr = new WebBundlr("https://devnet.bundlr.network","matic", signer.provider, { providerUrl: "https://polygon-rpc.com" })
@@ -27,17 +26,26 @@ export default function Home() {
     const amount = 0.0312 * 10**18
     let response = await bundlr.fund(amount)
     console.log(response)*/
+
     let tx = await bundlr.uploader.upload(file, [{name: "content-type", value: "image/png"}])
     console.log(tx)
-    setURI(`http://arweave.net/${tx.data.id}`)
-    
+    const image_uri = `http://arweave.net/${tx.data.id}`
+    setURI(image_uri)
+
+    const metadata = {
+      "name": document.getElementById('name').value,
+      "description": document.getElementById('bio').value,
+      "image": image_uri,
+      "attributes": [{}]
+    }
+    console.log(metadata)
   }
+
 
   function onFileChange(e) {
 
     const file = e.target.files[0]
     if (file) {
-
       const image = URL.createObjectURL(file)
       setImage(image)
       let reader = new FileReader()
@@ -47,6 +55,7 @@ export default function Home() {
         }
       }
       reader.readAsArrayBuffer(file)
+
     }
   }
 
@@ -75,10 +84,10 @@ export default function Home() {
           }
 
           <label>Username</label>
-          <input onChange={onFileChange} type="text" required style={{width: "150px"}}/>
+          <input id="name" type="text" required style={{width: "150px"}}/>
 
-          <label>bio</label>
-          <input onChange={onFileChange} type="text" required style={{width: "150px"}}/>
+          <label>biograghy</label>
+          <input id='bio' type="text" required style={{width: "150px"}}/>
 
           <button onClick={init} style={{width: '200px', marginTop: '20px'}}>initialize</button>
           
