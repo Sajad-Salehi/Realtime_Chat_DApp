@@ -11,7 +11,7 @@ contract nftMinter is ERC721URIStorage {
     Counters.Counter private _tokenId;
 
 
-    constructor() ERC721("NFT Minter", "NFT Minter") {
+    constructor() ERC721("Chat DApp", "NFT Minter") {
 
     }
 
