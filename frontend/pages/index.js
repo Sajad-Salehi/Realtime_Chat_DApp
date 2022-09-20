@@ -16,31 +16,43 @@ export default function Home() {
   const [file, setFile] = useState()
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
+  const [bundrInstance, setBundlr] = useState()
 
 
-  async function init() {
+  async function initBundlr() {
 
     const bundlr = new WebBundlr("https://devnet.bundlr.network","matic", signer.provider, { providerUrl: "https://polygon-rpc.com" })
     await bundlr.ready()
+    setBundlr(bundlr)
     /*console.log("connected")
-    const amount = 0.0312 * 10**18
+    const amount = 0.0112 * 10**18
     let response = await bundlr.fund(amount)
     console.log(response)*/
+  }
+
+  async function uploadImage() {
 
     let tx = await bundlr.uploader.upload(file, [{name: "content-type", value: "image/png"}])
     console.log(tx)
     const image_uri = `http://arweave.net/${tx.data.id}`
     setURI(image_uri)
+    return image_uri
+  }
 
+  async function uploadMetadata() {
+
+    const imageURI = uploadImage()
     const metadata = {
       "name": document.getElementById('name').value,
       "description": document.getElementById('bio').value,
-      "image": image_uri,
+      "image": imageURI,
       "attributes": [{}]
     }
-    console.log(metadata)
+    const json_metadata = Buffer.from(JSON.stringify(metadata))
+    let tx = await bundlr.uploader.upload(file, [{name: "content-type", value: "text/json"}])
+    const metadata_uri = `http://arweave.net/${tx.data.id}`
+    console.log(metadata_uri)
   }
-
 
   function onFileChange(e) {
 
