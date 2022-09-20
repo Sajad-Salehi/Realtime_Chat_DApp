@@ -16,7 +16,7 @@ export default function Home() {
   const [file, setFile] = useState()
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
-  const [bundrInstance, setBundlr] = useState()
+  const [bundlrInstance, setBundlr] = useState()
 
 
   async function initBundlr() {
@@ -74,40 +74,91 @@ export default function Home() {
 
   return (
     <div>
-      <h2>Chat DApp | New Profile</h2>
+      <h2>Chat DApp </h2>
       <ConnectButton />
       <hr></hr>
+      
       {isConnected ?(
-        <div style={{display: "flex", flexDirection: "column"}}>
-          
-          <h4>please connect your wallet to bundlr network</h4>
-          
-          {
-            !image && <div>
-              <label>Profile Picture</label>
-              <input onChange={onFileChange} type="file" required/>
-            </div>
-          }
-          {
-            image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />
-          }
-          {
-            URI && <a href={URI}>{URI}</a>
-          }
-
-          <label>Username</label>
-          <input id="name" type="text" required style={{width: "150px"}}/>
-
-          <label>biograghy</label>
-          <input id='bio' type="text" required style={{width: "150px"}}/>
-
-          <button onClick={init} style={{width: '200px', marginTop: '20px'}}>initialize</button>
-          
-        </div>
         
-      ) : (<h1>Please Connect to a wallet </h1>)
+        <div>
+          {typeof(bundlrInstance) === 'undefined' ?(
+            
+            <div style={{display: "flex", flexDirection: "column"}}>
+              <h4>please connect your wallet to bundlr network</h4>
+              <button onClick={initBundlr} style={{width: '150px'}}>Connect to Bundlr</button>
+            </div>
+
+          ):(
+
+            <div style={{display: "flex", flexDirection: "column"}}>
+              {
+                !image && <div>
+                  <label>Profile Picture</label>
+                  <input onChange={onFileChange} type="file" required/>
+                </div>
+              }
+              {
+                image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />
+              }
+              {
+                URI && <a href={URI}>{URI}</a>
+              }
+
+              <label>Username</label>
+              <input id="name" type="text" required style={{width: "150px"}}/>
+              <label>biograghy</label>
+              <input id='bio' type="text" required style={{width: "150px"}}/>
+              <button onClick={uploadMetadata} style={{width: '200px', marginTop: '20px'}}>initialize</button>
+            
+            </div>
+          )}
+
+        </div>
+
+      ) : (
+        <h1>please connect your wallet</h1>
+      
+      )
+    }
+
+    </div>     
+  )
+}
+
+
+/*
+
+<div style={{display: "flex", flexDirection: "column"}}>
+            <h4>please connect your wallet to bundlr network</h4>
+            <button onClick={initBundlr}>Connect to Bundlr</button>
+          </div>
+
+        ) : (
+          <div style={{display: "flex", flexDirection: "column"}}>
+            {
+              !image && <div>
+                <label>Profile Picture</label>
+                <input onChange={onFileChange} type="file" required/>
+              </div>
+            }
+            {
+              image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />
+            }
+            {
+              URI && <a href={URI}>{URI}</a>
+            }
+
+            <label>Username</label>
+            <input id="name" type="text" required style={{width: "150px"}}/>
+            <label>biograghy</label>
+            <input id='bio' type="text" required style={{width: "150px"}}/>
+            <button onClick={uploadMetadata} style={{width: '200px', marginTop: '20px'}}>initialize</button>
+          
+          </div>
+        )}
+        
+      ) : (<h1>Please Connect your wallet </h1>)
       }
       
     </div>
-  )
-}
+*/
