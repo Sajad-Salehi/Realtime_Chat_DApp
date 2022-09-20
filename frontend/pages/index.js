@@ -32,7 +32,7 @@ export default function Home() {
 
   async function uploadImage() {
 
-    let tx = await bundlr.uploader.upload(file, [{name: "content-type", value: "image/png"}])
+    let tx = await bundlrInstance.uploader.upload(file, [{name: "content-type", value: "image/png"}])
     console.log(tx)
     const image_uri = `http://arweave.net/${tx.data.id}`
     setURI(image_uri)
@@ -49,7 +49,7 @@ export default function Home() {
       "attributes": [{}]
     }
     const json_metadata = Buffer.from(JSON.stringify(metadata))
-    let tx = await bundlr.uploader.upload(file, [{name: "content-type", value: "text/json"}])
+    let tx = await bundlrInstance.uploader.upload(json_metadata, [{name: "content-type", value: "text/json"}])
     const metadata_uri = `http://arweave.net/${tx.data.id}`
     console.log(metadata_uri)
   }
@@ -91,18 +91,14 @@ export default function Home() {
           ):(
 
             <div style={{display: "flex", flexDirection: "column"}}>
+
               {
                 !image && <div>
                   <label>Profile Picture</label>
                   <input onChange={onFileChange} type="file" required/>
                 </div>
               }
-              {
-                image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />
-              }
-              {
-                URI && <a href={URI}>{URI}</a>
-              }
+              {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
 
               <label>Username</label>
               <input id="name" type="text" required style={{width: "150px"}}/>
