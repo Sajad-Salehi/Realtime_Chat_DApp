@@ -4,8 +4,8 @@ import { useAccount, useConnect, useDisconnect, useProvider, useSigner,
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WebBundlr } from '@bundlr-network/client'
 import { useState } from 'react'
-import { contractInterface } from './abi/nftMinter.json';
-import { waitForTransaction } from '@wagmi/core';
+import contractInterface from './abi/nftMinter.json';
+
 
 
 export default function Home() {
@@ -19,11 +19,16 @@ export default function Home() {
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
   const [bundlrInstance, setBundlr] = useState()
-  const contractConfig = usePrepareContractWrite({
+  const config = {
     addressOrName: '0x2b72578a895D5b82D9D8b81E63125D341EFD9Cd4',
-    
-    functionName: 'mint_nft'
+    contractInterface: contractInterface,
+    functionName: 'mint_nft',
+    args: []
+  }
+  const contractConfig = usePrepareContractWrite({
+    ...config
   });
+  const { write: mint_nft, isSuccess} = useContractWrite(contractConfig)
  
 
 
@@ -61,6 +66,8 @@ export default function Home() {
     let tx = await bundlrInstance.uploader.upload(json_metadata, [{name: "content-type", value: "text/json"}])
     const metadata_uri = `http://arweave.net/${tx.data.id}`
     console.log('metadata URL:', metadata_uri)
+    contractConfig.config.args = [metadata_uri]
+    console.log(contractConfig)
   }
 
 
@@ -109,7 +116,7 @@ export default function Home() {
                 </div>
               }
               {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
-              
+
               <label>Username</label>
               <input id="name" type="text" required style={{width: "150px"}}/>
               <label>biograghy</label>
