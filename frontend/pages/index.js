@@ -1,9 +1,11 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useConnect, useDisconnect, useProvider } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useProvider, useSigner, 
+  useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WebBundlr } from '@bundlr-network/client'
-import { useSigner } from 'wagmi'
 import { useState } from 'react'
+import { contractInterface } from './abi/nftMinter.json';
+import { waitForTransaction } from '@wagmi/core';
 
 
 export default function Home() {
@@ -17,6 +19,12 @@ export default function Home() {
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
   const [bundlrInstance, setBundlr] = useState()
+  const contractConfig = usePrepareContractWrite({
+    addressOrName: '0x2b72578a895D5b82D9D8b81E63125D341EFD9Cd4',
+    
+    functionName: 'mint_nft'
+  });
+ 
 
 
   async function initBundlr() {
@@ -24,35 +32,37 @@ export default function Home() {
     const bundlr = new WebBundlr("https://devnet.bundlr.network","matic", signer.provider, { providerUrl: "https://polygon-rpc.com" })
     await bundlr.ready()
     setBundlr(bundlr)
-    /*console.log("connected")
-    const amount = 0.0112 * 10**18
+    console.log("connected")
+    /*const amount = 0.0112 * 10**18
     let response = await bundlr.fund(amount)
     console.log(response)*/
   }
 
-  async function uploadImage() {
+  async function setMetadata() {
 
     let tx = await bundlrInstance.uploader.upload(file, [{name: "content-type", value: "image/png"}])
-    console.log(tx)
     const image_uri = `http://arweave.net/${tx.data.id}`
     setURI(image_uri)
-    return image_uri
-  }
+    console.log('image URL:', image_uri)
 
-  async function uploadMetadata() {
-
-    const imageURI = uploadImage()
     const metadata = {
+
       "name": document.getElementById('name').value,
       "description": document.getElementById('bio').value,
-      "image": imageURI,
+      "image": image_uri,
       "attributes": [{}]
     }
+    uploadJsonMetadata(metadata)
+  }
+
+  async function uploadJsonMetadata(metadata) {
+
     const json_metadata = Buffer.from(JSON.stringify(metadata))
     let tx = await bundlrInstance.uploader.upload(json_metadata, [{name: "content-type", value: "text/json"}])
     const metadata_uri = `http://arweave.net/${tx.data.id}`
-    console.log(metadata_uri)
+    console.log('metadata URL:', metadata_uri)
   }
+
 
   function onFileChange(e) {
 
@@ -99,12 +109,12 @@ export default function Home() {
                 </div>
               }
               {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
-
+              
               <label>Username</label>
               <input id="name" type="text" required style={{width: "150px"}}/>
               <label>biograghy</label>
               <input id='bio' type="text" required style={{width: "150px"}}/>
-              <button onClick={uploadMetadata} style={{width: '200px', marginTop: '20px'}}>initialize</button>
+              <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
             
             </div>
           )}
