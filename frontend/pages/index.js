@@ -20,7 +20,7 @@ export default function Home() {
   const [URI, setURI] = useState()
   const [bundlrInstance, setBundlr] = useState()
   const config = {
-    addressOrName: '0x2b72578a895D5b82D9D8b81E63125D341EFD9Cd4',
+    addressOrName: '0x4F514161018BE7B438b282e5cFc42CbFD66D8971s',
     contractInterface: contractInterface,
     functionName: 'mint_nft',
     args: []
