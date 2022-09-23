@@ -20,7 +20,7 @@ export default function Home() {
   const [URI, setURI] = useState()
   const [bundlrInstance, setBundlr] = useState()
   const config = {
-    addressOrName: '0x4F514161018BE7B438b282e5cFc42CbFD66D8971s',
+    addressOrName: '0x4F514161018BE7B438b282e5cFc42CbFD66D8971',
     contractInterface: contractInterface,
     functionName: 'mint_nft',
     args: []
@@ -29,6 +29,7 @@ export default function Home() {
     ...config
   });
   const { write: mint_nft, isSuccess} = useContractWrite(contractConfig)
+
  
 
 
@@ -47,7 +48,6 @@ export default function Home() {
 
     let tx = await bundlrInstance.uploader.upload(file, [{name: "content-type", value: "image/png"}])
     const image_uri = `http://arweave.net/${tx.data.id}`
-    setURI(image_uri)
     console.log('image URL:', image_uri)
 
     const metadata = {
@@ -67,7 +67,7 @@ export default function Home() {
     const metadata_uri = `http://arweave.net/${tx.data.id}`
     console.log('metadata URL:', metadata_uri)
     contractConfig.config.args = [metadata_uri]
-    console.log(contractConfig)
+    console.log(isSuccess)
   }
 
 
@@ -107,22 +107,34 @@ export default function Home() {
 
           ):(
 
-            <div style={{display: "flex", flexDirection: "column"}}>
+            <div >
 
-              {
-                !image && <div>
-                  <label>Profile Picture</label>
-                  <input onChange={onFileChange} type="file" required/>
+              {typeof(URI) !== 'undefined' ?(
+
+                <h1>salam</h1>
+              ) : (
+
+                <div style={{display: "flex", flexDirection: "column"}}>
+
+                  {
+                    !image && <div>
+                      <label>Profile Picture</label>
+                      <input onChange={onFileChange} type="file" required/>
+                    </div>
+                  }
+                  {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
+
+                  <label>Username</label>
+                  <input id="name" type="text" required style={{width: "150px"}}/>
+                  <label>biograghy</label>
+                  <input id='bio' type="text" required style={{width: "150px"}}/>
+                  <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
+                
                 </div>
+              )
+              
               }
-              {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
-
-              <label>Username</label>
-              <input id="name" type="text" required style={{width: "150px"}}/>
-              <label>biograghy</label>
-              <input id='bio' type="text" required style={{width: "150px"}}/>
-              <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
-            
+              
             </div>
           )}
 
