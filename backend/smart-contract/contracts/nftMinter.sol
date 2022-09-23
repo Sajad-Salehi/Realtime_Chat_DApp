@@ -16,7 +16,7 @@ contract nftMinter is ERC721URIStorage {
     }
 
 
-    function mint_nft(string memory tokenURI) public {
+    function mint_nft(string memory tokenURI) public returns(uint256){
         
         uint256 newItemId = _tokenId.current();
 
@@ -24,6 +24,7 @@ contract nftMinter is ERC721URIStorage {
         _setTokenURI(newItemId, tokenURI);
 
         _tokenId.increment();
+        return newItemId;
     }
     
 }
