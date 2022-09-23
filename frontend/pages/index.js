@@ -1,37 +1,26 @@
+import { useState } from 'react'
+import { ethers } from 'ethers'
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useConnect, useDisconnect, useProvider, useSigner, 
-  useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useProvider, useSigner } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WebBundlr } from '@bundlr-network/client'
-import { useState } from 'react'
-import contractInterface from './abi/nftMinter.json';
-
+const {abi} = require('./abi/nftMinter.json')
 
 
 export default function Home() {
   
   const { address, isConnected } = useAccount()
-  const { connect } = useConnect({connector: new InjectedConnector()})
   const { disconnect } = useDisconnect()
   const { provider } = useProvider()
-  const { data: signer, isError, isLoading } = useSigner()
   const [file, setFile] = useState()
   const [image, setImage] = useState()
   const [URI, setURI] = useState()
+  const [ opensea_uri, setOpensea ]= useState()
   const [bundlrInstance, setBundlr] = useState()
-  const config = {
-    addressOrName: '0x4F514161018BE7B438b282e5cFc42CbFD66D8971',
-    contractInterface: contractInterface,
-    functionName: 'mint_nft',
-    args: []
-  }
-  const contractConfig = usePrepareContractWrite({
-    ...config
-  });
-  const { write: mint_nft, isSuccess} = useContractWrite(contractConfig)
-
+  const { data: signer, isError, isLoading } = useSigner()
+  const { connect } = useConnect({connector: new InjectedConnector()})
+  const contractAddress = '0x037aD77c7e65e098E1E292b1e1dD7A6f033c98d6'
  
-
 
   async function initBundlr() {
 
@@ -66,10 +55,18 @@ export default function Home() {
     let tx = await bundlrInstance.uploader.upload(json_metadata, [{name: "content-type", value: "text/json"}])
     const metadata_uri = `http://arweave.net/${tx.data.id}`
     console.log('metadata URL:', metadata_uri)
-    contractConfig.config.args = [metadata_uri]
-    console.log(isSuccess)
+    setURI(metadata_uri)
+    mint_nft(metadata_uri)
   }
 
+  async function mint_nft(metadata_uri) {
+
+    let contract = new ethers.Contract(contractAddress, abi, signer)
+    let tx = await contract.mint_nft(metadata_uri)
+    const uri = `https://testnets.opensea.io/assets/mumbai/${contractAddress}/${tx.v}`
+    console.log(tx, uri)
+    
+  }
 
   function onFileChange(e) {
 
@@ -107,34 +104,24 @@ export default function Home() {
 
           ):(
 
-            <div >
+            <div style={{display: "flex", flexDirection: "column"}}>
 
-              {typeof(URI) !== 'undefined' ?(
-
-                <h1>salam</h1>
-              ) : (
-
-                <div style={{display: "flex", flexDirection: "column"}}>
-
-                  {
-                    !image && <div>
-                      <label>Profile Picture</label>
-                      <input onChange={onFileChange} type="file" required/>
-                    </div>
-                  }
-                  {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
-
-                  <label>Username</label>
-                  <input id="name" type="text" required style={{width: "150px"}}/>
-                  <label>biograghy</label>
-                  <input id='bio' type="text" required style={{width: "150px"}}/>
-                  <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
-                
+              {
+                !image && <div>
+                  <label>Profile Picture</label>
+                  <input onChange={onFileChange} type="file" required/>
                 </div>
-              )
-              
               }
-              
+              {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
+
+              <label>Username</label>
+              <input id="name" type="text" required style={{width: "150px"}}/>
+              <label>biograghy</label>
+              <input id='bio' type="text" required style={{width: "150px"}}/>
+              <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
+              {
+                opensea_uri && <a href={opensea_uri} >link</a>
+              }
             </div>
           )}
 
