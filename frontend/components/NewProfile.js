@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ethers } from 'ethers'
-import { useConnect, useProvider, useSigner } from 'wagmi'
+import { useAccount, useConnect, useProvider, useSigner } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WebBundlr } from '@bundlr-network/client'
 const {abi} = require('../pages/abi/nftMinter.json')
@@ -9,6 +9,7 @@ const {abi} = require('../pages/abi/nftMinter.json')
 export default function NewProfile() {
 
     const { provider } = useProvider()
+    const { address } = useAccount()
     const [file, setFile] = useState()
     const [image, setImage] = useState()
     const [URI, setURI] = useState()
@@ -59,10 +60,26 @@ export default function NewProfile() {
     async function mint_nft(metadata_uri) {
     
         let contract = new ethers.Contract(contractAddress, abi, signer)
-        let tx = await contract.mint_nft(metadata_uri)
-        const uri = `https://testnets.opensea.io/assets/mumbai/${contractAddress}/${tx.v}`
+        //let tx = await contract.mint_nft(metadata_uri)
+        const uri = `https://testnets.opensea.io/assets/mumbai/${contractAddress}/`//${tx.v}
         setOpensea(uri)
+        proccessRegister(address, uri, 'mm')
         
+    }
+
+    async function proccessRegister(address, nft_uri, nft_address) {
+
+        const res = await fetch(`http://127.0.0.1:8000/register`, {
+          method: 'POST',
+          body: JSON.stringify({
+            address: address,
+            avatar_url: nft_uri,
+            avatar_address: nft_address
+            }),  
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
     }
     
     function onFileChange(e) {
