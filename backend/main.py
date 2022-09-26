@@ -1,16 +1,31 @@
-
 from fastapi import FastAPI
+from user import User
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
 
-@app.get("/")
-async def home():
-    
-    return "hello world"
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-@app.get("/register")
-async def register():
+@app.post("/authenticate")
+async def authenticate(address: str):
     pass
 
+
+
+@app.post("/register")
+async def register(user: User):
+    
+    print(user)
+    return "recived"
