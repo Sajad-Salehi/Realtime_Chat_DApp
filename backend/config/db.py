@@ -2,5 +2,7 @@ import os
 from pymongo import MongoClient
 
 
-client = MongoClient(os.getenv('MONGODB'))
+client = MongoClient("")
 db = client.chat_dapp
+collection = db["users"]
+
