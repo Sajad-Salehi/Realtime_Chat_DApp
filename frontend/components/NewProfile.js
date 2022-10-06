@@ -61,6 +61,7 @@ export default function NewProfile() {
     
         let contract = new ethers.Contract(contractAddress, abi, signer)
         //let tx = await contract.mint_nft(metadata_uri)
+        //console.log(tx)
         const uri = `https://testnets.opensea.io/assets/mumbai/${contractAddress}/`//${tx.v}
         setOpensea(uri)
         proccessRegister(address, uri, 'mm')
@@ -78,6 +79,16 @@ export default function NewProfile() {
             }),  
           headers: {
             'Content-Type': 'application/json'
+          }
+        })
+        
+        res.json().then(resp => {
+          if(resp.status === 'ok'){
+            alert("Your profile submited successfully")
+          }
+          else{
+            alert("Failed to add your profile")
+            console.log(resp)
           }
         })
     }
