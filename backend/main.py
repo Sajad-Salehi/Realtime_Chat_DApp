@@ -22,15 +22,15 @@ app.add_middleware(
 @app.post("/authenticate")
 async def authenticate(address: str):
     
+    status = "false"
     user = collection.find_one({"address": str(address)})
     if(user):
-        return "true"
-    else:
-        return "false"
+        return {"status": status}
+
 
 
 @app.post("/register")
 async def register(user: User):
     
     collection.insert_one(dict(user))
-    return "success"
+    return {"status": "ok"}
