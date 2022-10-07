@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from models.user import User
+from models.user import User, UserAddress
 from config.db import collection
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,12 +20,14 @@ app.add_middleware(
 
 
 @app.post("/authenticate")
-async def authenticate(address: str):
-    
-    status = "false"
-    user = collection.find_one({"address": str(address)})
-    if(user):
-        return {"status": status}
+async def authenticate(info: UserAddress):
+
+    user_address = dict(info)
+    data = collection.find_one({"address": user_address["address"]})
+    if(data != None):
+        return {"status": "ok"}
+    else:
+        return {"status": "false"}
 
 
 
