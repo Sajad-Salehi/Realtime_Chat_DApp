@@ -9,6 +9,7 @@ const {abi} = require('../pages/abi/nftMinter.json')
 export default function NewProfile() {
 
     const { provider } = useProvider()
+    const [ profileStatus, setStatus ] = useState(true)
     const { address } = useAccount()
     const [file, setFile] = useState()
     const [image, setImage] = useState()
@@ -85,6 +86,7 @@ export default function NewProfile() {
         res.json().then(resp => {
           if(resp.status === 'ok'){
             alert("Your profile submited successfully")
+            setStatus(false)
           }
           else{
             alert("Failed to add your profile")
@@ -123,24 +125,33 @@ export default function NewProfile() {
 
           ):(
 
-            <div style={{display: "flex", flexDirection: "column"}}>
-
+            <div>
+              {console.log(profileStatus)}
               {
-                !image && <div>
-                  <label>Profile Picture</label>
-                  <input onChange={onFileChange} type="file" required/>
-                </div>
-              }
-              {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
+                profileStatus? (
 
-              <label>Username</label>
-              <input id="name" type="text" required style={{width: "150px"}}/>
-              <label>biograghy</label>
-              <input id='bio' type="text" required style={{width: "150px"}}/>
-              <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
-              {
-                opensea_uri && <a href={opensea_uri} >link</a>
-              }
+                  <div style={{display: "flex", flexDirection: "column"}}>
+                    {
+                      !image && <div>
+                        <label>Profile Picture</label>
+                        <input onChange={onFileChange} type="file" required/>
+                      </div>
+                    }
+                    {image && <img src={image} style={{width: "150px", height: "150px", borderRadius: "100%"}} />}
+
+                    <label>Username</label>
+                    <input id="name" type="text" required style={{width: "150px"}}/>
+                    <label>biograghy</label>
+                    <input id='bio' type="text" required style={{width: "150px"}}/>
+                    <button onClick={setMetadata} style={{width: '200px', marginTop: '20px'}}>Upload metadata</button>
+                    {
+                      opensea_uri && <a href={opensea_uri} >link</a>
+                    }
+                  </div>
+
+              ) : (
+                <h1>salaam</h1>
+              )}
             </div>
           )}
 
