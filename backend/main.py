@@ -1,6 +1,7 @@
+import requests
 from fastapi import FastAPI
-from models.user import User, UserAddress
 from config.db import collection
+from models.user import User, UserAddress, UserMetadata
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -30,9 +31,33 @@ async def authenticate(info: UserAddress):
         return {"status": "false"}
 
 
-
 @app.post("/register")
 async def register(user: User):
     
     collection.insert_one(dict(user))
     return {"status": "ok"}
+
+
+@app.post("/getUserInfo")
+async def getUserMetadata(info: UserAddress):
+
+    user_address = dict(info)
+    data = collection.find_one({"address": user_address["address"]})
+
+    if(data):
+
+        url = data["metadata"]
+        r = requests.get(url)
+        metadata = dict(r.json())
+
+        userMetadata = UserMetadata(
+            id = data["id"], 
+            username = metadata["name"],
+            biography = metadata["description"], 
+            image_url = metadata["image"], 
+            opensea_url = data["opensea_url"]
+        )
+        return userMetadata
+    
+    return {"status": "false"}
+
