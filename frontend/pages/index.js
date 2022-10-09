@@ -10,14 +10,22 @@ export default function Home() {
   
   const { address, isConnected } = useAccount()
   const [ IsRegister, setRegister] = useState()
+  const [ userMetadata, setUserMetadata ] = useState()
   const { disconnect } = useDisconnect()
   const { connect } = useConnect({connector: new InjectedConnector()})
 
 
   React.useEffect(() => {
 
-    CheckRegister(address)
-  })
+    if(isConnected){
+
+      CheckRegister(address)
+      if(IsRegister){
+        getUserMetadata(address)
+      }
+    }
+  }, [address])
+
 
   async function CheckRegister(Address){
 
@@ -44,6 +52,24 @@ export default function Home() {
   }
 
 
+  async function getUserMetadata(Address){
+
+    const res = await fetch(`http://127.0.0.1:8000/getUserInfo`, {
+      method: 'POST',
+        body: JSON.stringify({
+          "address": Address
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+    })
+
+    res.json().then(resp => {
+
+      console.log(resp)
+      setUserMetadata(resp)
+    })
+  }
 
 
   return (
@@ -57,7 +83,16 @@ export default function Home() {
         
         <div>
           
-          { IsRegister? (<h1>hi</h1>) : (<NewProfile />)}
+          { IsRegister? (
+
+            <div>
+              
+            </div>
+          
+          ) : (
+
+            <NewProfile />
+          )}
         
         </div>
 
