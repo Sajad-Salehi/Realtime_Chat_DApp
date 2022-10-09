@@ -8,4 +8,4 @@ def main():
 
     print(f"Your contract deployed at address: {contract}")
 
-    #0x4F514161018BE7B438b282e5cFc42CbFD66D8971
+    #0x6a2c8C358F2C55cd68AC263f77565C0ad7036625
