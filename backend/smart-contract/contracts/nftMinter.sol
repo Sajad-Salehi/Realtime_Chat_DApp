@@ -9,14 +9,13 @@ contract nftMinter is ERC721URIStorage {
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenId;
-
+    
 
     constructor() ERC721("Chat DApp", "NFT Minter") {
 
     }
 
-
-    function mint_nft(string memory tokenURI) public returns(uint256){
+    function mint_nft(string memory tokenURI) public  {
         
         uint256 newItemId = _tokenId.current();
 
@@ -24,7 +23,11 @@ contract nftMinter is ERC721URIStorage {
         _setTokenURI(newItemId, tokenURI);
 
         _tokenId.increment();
-        return newItemId;
     }
     
+    function getTokenID() public view returns(uint256){
+
+        uint256 tokenID = _tokenId.current() - 1;
+        return tokenID;
+    }
 }
