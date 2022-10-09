@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ethers } from 'ethers'
-import { useAccount, useConnect, useProvider, useSigner } from 'wagmi'
+import { useAccount, useConnect, useProvider, useSigner, useWaitForTransaction } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WebBundlr } from '@bundlr-network/client'
 const {abi} = require('../pages/abi/nftMinter.json')
@@ -13,12 +13,15 @@ export default function NewProfile() {
     const { address } = useAccount()
     const [file, setFile] = useState()
     const [image, setImage] = useState()
-    const [URI, setURI] = useState()
+    const [ MetadataURI, setURI ] = useState()
     const [ opensea_uri, setOpensea ]= useState()
-    const [bundlrInstance, setBundlr] = useState()
+    const [ PolyScan, setPolyScan ] = useState()
+    const [ username, setUsername ] = useState()
+    const [ biograghy, setBio ] = useState()
+    const [ bundlrInstance, setBundlr ] = useState()
     const { data: signer, isError, isLoading } = useSigner()
     const { connect } = useConnect({connector: new InjectedConnector()})
-    const contractAddress = '0x037aD77c7e65e098E1E292b1e1dD7A6f033c98d6'
+    const contractAddress = '0x6a2c8C358F2C55cd68AC263f77565C0ad7036625'
 
 
     async function initBundlr() {
@@ -45,6 +48,8 @@ export default function NewProfile() {
           "image": image_uri,
           "attributes": [{}]
         }
+        setUsername(metadata["name"])
+        setBio(metadata["description"])
         uploadJsonMetadata(metadata)
     }
     
@@ -61,22 +66,31 @@ export default function NewProfile() {
     async function mint_nft(metadata_uri) {
     
         let contract = new ethers.Contract(contractAddress, abi, signer)
-        //let tx = await contract.mint_nft(metadata_uri)
-        //console.log(tx)
-        const uri = `https://testnets.opensea.io/assets/mumbai/${contractAddress}/`//${tx.v}
+        let tx = await contract.mint_nft(metadata_uri)
+        let txReceipt = await tx.wait()
+        
+        setTimeout(() => {  console.log("Wait ..."); }, 5000);
+        const TokenId = await contract.getTokenID()
+
+        const polyScan = `https://mumbai.polygonscan.com/tx/${tx.hash}`
+        const uri = `https://testnets.opensea.io/assets/mumbai/${contractAddress}/${TokenId.toString()}`
         setOpensea(uri)
-        proccessRegister(address, uri, 'mm')
+        setPolyScan(polyScan)
+        proccessRegister(address, uri, metadata_uri, TokenId.toString())
         
     }
 
-    async function proccessRegister(address, nft_uri, nft_address) {
+    async function proccessRegister(address, nft_uri, metadata_uri, userID) {
 
         const res = await fetch(`http://127.0.0.1:8000/register`, {
           method: 'POST',
           body: JSON.stringify({
+
+            id: userID,
             address: address,
-            avatar_url: nft_uri,
-            avatar_address: nft_address
+            metadata: metadata_uri,
+            opensea_url: nft_uri
+            
             }),  
           headers: {
             'Content-Type': 'application/json'
@@ -90,7 +104,6 @@ export default function NewProfile() {
           }
           else{
             alert("Failed to add your profile")
-            console.log(resp)
           }
         })
     }
@@ -126,7 +139,6 @@ export default function NewProfile() {
           ):(
 
             <div>
-              {console.log(profileStatus)}
               {
                 profileStatus? (
 
@@ -150,7 +162,14 @@ export default function NewProfile() {
                   </div>
 
               ) : (
-                <h1>salaam</h1>
+                <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                  {image && <img src={image} style={{width: "200px", height: "200px", borderRadius: "100%"}} />}
+                  <h2>{username}</h2>
+                  <br></br>
+                  <h5>{biograghy}</h5>
+                  <a href={opensea_uri}>Opensea</a>
+                  <a href={PolyScan}>Polygon Scan</a>
+                </div>
               )}
             </div>
           )}
